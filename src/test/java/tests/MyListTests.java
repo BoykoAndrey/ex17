@@ -62,7 +62,9 @@ public class MyListTests extends CoreTestCase {
     @Test
     public void testSaveTwoArticleToMyList() {
         String firstArticle = "Java (programming language)";
+        String firstArticleWitchSubstring = "bject-oriented programming language";
         String secondArticle = "JavaScript";
+        String secondArticleWitchSubstring = "igh-level programming language";
         String nameOfFolder = "Learning programming";
 
         SearchPageObject searchPageObject = SearchPageObjectFactory.get(driver);
@@ -72,12 +74,22 @@ public class MyListTests extends CoreTestCase {
 
         searchPageObject.initSearchInput();
         searchPageObject.typeSearchLine(firstArticle);
-        searchPageObject.clickByArticleWitchSubstring(firstArticle);
+        searchPageObject.clickByArticleWitchSubstring(firstArticleWitchSubstring);
 
         articlePageObject.waitForTitleElement();
         if (Platform.getInstance().isAndroid()) {
             articlePageObject.addArticleToMyList(nameOfFolder);
         } else {
+            articlePageObject.addArticlesToMySaved();
+        }
+
+        if (Platform.getInstance().isMW()) {
+            AuthorizationPageObject authorizationPageObject = new AuthorizationPageObject(driver);
+            authorizationPageObject.clickAuthButton();
+            authorizationPageObject.enterLoginData(login, password);
+            authorizationPageObject.submitForm();
+
+            articlePageObject.waitForTitleElement();
             articlePageObject.addArticlesToMySaved();
         }
         articlePageObject.closeArticle();
@@ -92,7 +104,14 @@ public class MyListTests extends CoreTestCase {
             searchPageObject.clickSearchLine();
             searchPageObject.typeSearchLine(secondArticle);
         }
-        searchPageObject.clickByArticleWitchSubstring(secondArticle);
+
+        if (Platform.getInstance().isMW()) {
+            searchPageObject.initSearchInput();
+            searchPageObject.typeSearchLine(secondArticle);
+            searchPageObject.clickByArticleWitchSubstring(secondArticleWitchSubstring);
+        } else {
+            searchPageObject.clickByArticleWitchSubstring(secondArticle);
+        }
 
         articlePageObject.waitForTitleElement();
         if (Platform.getInstance().isAndroid()) {
@@ -111,6 +130,9 @@ public class MyListTests extends CoreTestCase {
             navigationUI.clickBackButton();
         }
 
+        if (Platform.getInstance().isMW()) {
+            navigationUI.openNavigation();
+        }
         navigationUI.clickMyLists();
 
         if (Platform.getInstance().isAndroid()) {
