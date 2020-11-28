@@ -58,7 +58,7 @@ public class SearchTests extends CoreTestCase {
         values.put("JavaScript", "High-level programming language");
         values.put("Java (programming language)", "Object-oriented programming language");
 
-        if (Platform.getInstance().isAndroid()) {
+        if (Platform.getInstance().isAndroid() || Platform.getInstance().isMW()) {
             searchPageObject.initSearchInput();
             searchPageObject.typeSearchLine(searchLine);
         } else if (Platform.getInstance().isIOS()) {
